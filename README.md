@@ -2,7 +2,7 @@
 
 Upload a receipt or invoice, get verified structured fields, line items, and CSV in seconds. Built with Next.js and Claude vision.
 
-**Live demo:** _(deploy link goes here)_
+**Live demo:** https://doc-extractor-chenglin-s-projects.vercel.app
 
 ## Why this exists
 
