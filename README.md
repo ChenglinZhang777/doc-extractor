@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LedgerLens — receipts & invoices → structured data
 
-## Getting Started
+Upload a receipt or invoice, get verified structured fields, line items, and CSV in seconds. Built with Next.js and Claude vision.
 
-First, run the development server:
+**Live demo:** _(deploy link goes here)_
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Why this exists
+
+Manual data entry from receipts is slow and error-prone, and regex-based OCR breaks on every new layout. This demo shows the modern approach: a vision model reads the document like a human, and **schema-enforced structured outputs** guarantee the result is always valid JSON — no parsing surprises, no brittle templates.
+
+## How it works
+
+```
+receipt/invoice ──▶ Claude vision ──▶ schema-validated JSON ──▶ review UI ──▶ CSV / JSON
+ (PNG/JPEG/PDF)      (claude-haiku-4-5)   (structured outputs)     (split view)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Any layout** — thermal receipts, formal B2B invoices, handwritten tips; no per-vendor templates
+- **Honest about unknowns** — unreadable fields come back as `null` (shown as “n/a”), never guessed; ambiguities are flagged in a `notes` field
+- **Schema-enforced** — the [JSON schema](lib/schema.ts) is enforced by the API itself via structured outputs
+- **Review-first UX** — split view (document left, fields right) modeled on how professional document-AI tools present extractions for human verification
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Quick start
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+export ANTHROPIC_API_KEY=sk-ant-...   # https://platform.claude.com
+npm run dev                            # open http://localhost:3000
+```
 
-## Learn More
+Two sample documents are built in (a café thermal receipt and a B2B invoice with discount and zero tax) — click and extract, no upload needed.
 
-To learn more about Next.js, take a look at the following resources:
+## Adapt it to your workflow
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Different document types** — edit the schema in [lib/schema.ts](lib/schema.ts) (purchase orders, IDs, delivery notes…); the API contract stays the same
+- **Pipeline mode** — POST `{data: <base64>, media_type}` to `/api/extract` from any backend; wire the JSON into your bookkeeping tool, spreadsheet, or database
+- **Batch processing** — for high volume, the same extraction runs on the Anthropic Batch API at 50% cost
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Cost
 
-## Deploy on Vercel
+A typical receipt costs **~1–2¢** to process with `claude-haiku-4-5` (vision input + structured output). Set a monthly spend cap in the Anthropic console. Per-IP rate limiting (5/min) is built in; files are processed in memory and never stored.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js 16 (App Router) · TypeScript · Tailwind CSS · `@anthropic-ai/sdk` (vision + structured outputs)
