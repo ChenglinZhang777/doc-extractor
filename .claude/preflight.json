@@ -1,0 +1,10 @@
+{
+  "_note": "四元组取自 package.json，无新造命令；本仓暂无本地测试脚本（提取质量验证依赖生产冒烟）。草稿待人验收。",
+  "install": "npm install",
+  "lint": null,
+  "test": null,
+  "run_smoke": "npm run build",
+  "env_hint": "LLM 调用需 .env.local（ANTHROPIC_BASE_URL/API_KEY/MODEL），构建不需要",
+  "base_branch": "main",
+  "status": "草稿待人验收"
+}
