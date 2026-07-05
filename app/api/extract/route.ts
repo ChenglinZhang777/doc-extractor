@@ -4,7 +4,15 @@ import { extractionSchema } from "@/lib/schema";
 
 export const runtime = "nodejs";
 
-const MODEL = process.env.ANTHROPIC_MODEL ?? "claude-haiku-4-5";
+// 供给端点 / 密钥 / 模型均用项目自有变量：宿主环境（部分桌面工具）可能已导出 ANTHROPIC_BASE_URL，
+// 而 Next.js 中 OS 环境变量优先于 .env.local，会让默认端点覆盖项目配置。显式读取避开该冲突。
+const BASE_URL = process.env.LLM_BASE_URL ?? process.env.ANTHROPIC_BASE_URL;
+const API_KEY = process.env.LLM_API_KEY ?? process.env.ANTHROPIC_API_KEY;
+const MODEL = process.env.LLM_MODEL ?? process.env.ANTHROPIC_MODEL;
+
+function createClient() {
+  return new Anthropic({ baseURL: BASE_URL, apiKey: API_KEY });
+}
 
 const IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif"] as const;
 const MAX_BASE64_CHARS = 7_000_000; // ~5MB 文件
@@ -59,9 +67,9 @@ export async function POST(req: Request) {
     );
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!BASE_URL || !API_KEY || !MODEL) {
     return NextResponse.json(
-      { error: "Server is not configured: ANTHROPIC_API_KEY is missing." },
+      { error: "Server is not configured: set LLM_BASE_URL, LLM_API_KEY, and LLM_MODEL." },
       { status: 500 },
     );
   }
@@ -84,7 +92,7 @@ export async function POST(req: Request) {
         },
       };
 
-  const client = new Anthropic();
+  const client = createClient();
   const started = Date.now();
   try {
     const response = await client.messages.create({
@@ -116,7 +124,6 @@ export async function POST(req: Request) {
     return NextResponse.json({
       extraction: JSON.parse(text.text),
       meta: {
-        model: MODEL,
         elapsed_ms: Date.now() - started,
         input_tokens: response.usage.input_tokens,
         output_tokens: response.usage.output_tokens,

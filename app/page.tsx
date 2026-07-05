@@ -4,7 +4,6 @@ import { useCallback, useState } from "react";
 import type { Extraction } from "@/lib/schema";
 
 interface Meta {
-  model: string;
   elapsed_ms: number;
   input_tokens: number;
   output_tokens: number;
@@ -189,7 +188,7 @@ export default function Home() {
             </p>
           </div>
           <span className="ml-auto rounded-full border border-line bg-paper px-3 py-1 text-[11px] text-ink-soft">
-            Portfolio demo · Claude vision · nothing is stored
+            AI vision · files never stored
           </span>
         </div>
       </header>
@@ -310,7 +309,7 @@ export default function Home() {
               </h2>
               {meta && result && (
                 <span className="font-mono text-[11px] text-ink-soft">
-                  {meta.model} · {(meta.elapsed_ms / 1000).toFixed(1)}s
+                  extracted in {(meta.elapsed_ms / 1000).toFixed(1)}s
                 </span>
               )}
             </div>
@@ -420,8 +419,8 @@ export default function Home() {
           <div className="grid gap-5 sm:grid-cols-3 text-[12.5px] leading-relaxed text-ink-soft">
             <div>
               <p className="font-semibold text-ink mb-1">Schema-enforced output</p>
-              Claude vision reads the document; structured outputs guarantee the
-              JSON always matches the schema — no parsing surprises.
+              An AI vision model reads the document; a strict schema guarantees the
+              JSON always matches the expected shape — no parsing surprises.
             </div>
             <div>
               <p className="font-semibold text-ink mb-1">Honest about unknowns</p>
@@ -438,7 +437,7 @@ export default function Home() {
       </main>
 
       <footer className="border-t border-line py-5 text-center text-[11.5px] text-ink-soft/70">
-        Fictional documents · Built with Next.js &amp; Claude · files are processed
+        Sample documents · Built with Next.js · files are processed
         in memory, never stored
       </footer>
     </div>

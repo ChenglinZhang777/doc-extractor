@@ -17,7 +17,7 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "LedgerLens — receipts to structured data",
   description:
-    "Upload a receipt or invoice, get verified structured fields and CSV in seconds. Portfolio demo built with Next.js and Claude vision.",
+    "Upload a receipt or invoice and get verified, structured fields and CSV in seconds. Built with Next.js and AI vision.",
 };
 
 export default function RootLayout({
